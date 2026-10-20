@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Topzinga · Düello</title>
+  <meta name="description" content="Bir arkadaşın sana Topzinga’da meydan okudu. Onun hayaletine karşı aynı sahada oyna!">
+  <meta property="og:title" content="Topzinga · Düello">
+  <meta property="og:description" content="Bir arkadaşın sana meydan okudu. Onun hayaletine karşı aynı sahada oyna!">
+  <meta property="og:image" content="https://erdaldanis.github.io/topzinga/icon.png">
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .duel { text-align: center; padding: 26px 20px; border-color: rgba(255, 138, 92, 0.45); }
+    .duel .code { font-size: 40px; font-weight: 800; letter-spacing: 8px; color: #ff8a5c; margin: 6px 0 2px; }
+    .btn { display: block; text-align: center; text-decoration: none; font-weight: 800; font-size: 18px; border-radius: 16px;
+           padding: 15px 18px; margin: 12px 0 0; background: var(--accent); color: #062026; }
+    .btn.alt { background: var(--surface); color: var(--text); border: 1px solid var(--border); font-weight: 600; font-size: 16px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <a href="./"><img src="icon.png" alt=""></a>
+      <div>
+        <a href="./" class="brand">Topzinga</a>
+        <div class="tag">Düello · Duel</div>
+      </div>
+    </header>
+
+    <div class="card duel">
+      <h1 id="title">Sana meydan okundu!</h1>
+      <p id="sub">Arkadaşının hayaletine karşı aynı sahada oyna.</p>
+      <div class="muted" id="codeLabel">Düello kodu</div>
+      <div class="code" id="code">······</div>
+      <a class="btn" id="open" href="#">Uygulamada aç</a>
+      <a class="btn alt hidden" id="play" href="https://play.google.com/store/apps/details?id=com.erdaldanis.topzinga">Google Play'den indir</a>
+      <a class="btn alt hidden" id="ios" href="#">App Store'dan indir</a>
+    </div>
+
+    <div class="card">
+      <p id="help">Uygulama yüklüyse <strong>Uygulamada aç</strong>'a dokun. Yüklü değilse indir, ardından ana ekrandaki
+        <strong>Düello</strong> düğmesinden yukarıdaki kodu gir.</p>
+    </div>
+
+    <footer>© 2026 FIRTINEX · <a href="privacy.html">Gizlilik / Privacy</a></footer>
+  </main>
+  <script>
+    (function () {
+      // App Store bağlantısı yayınlanınca buraya yazılır (boşsa düğme gizli kalır)
+      var IOS_URL = '';
+      var PKG = 'com.erdaldanis.topzinga';
+      var PLAY_URL = 'https://play.google.com/store/apps/details?id=' + PKG;
+
+      var en = !/^tr/i.test(navigator.language || '');
+      if (en) {
+        document.documentElement.lang = 'en';
+        document.getElementById('title').textContent = 'You have been challenged!';
+        document.getElementById('sub').textContent = "Play against your friend's ghost on the same pitch.";
+        document.getElementById('codeLabel').textContent = 'Duel code';
+        document.getElementById('open').textContent = 'Open in the app';
+        document.getElementById('play').textContent = 'Get it on Google Play';
+        document.getElementById('ios').textContent = 'Download on the App Store';
+        document.getElementById('help').innerHTML = 'If the app is installed, tap <strong>Open in the app</strong>. ' +
+          'Otherwise install it, then enter the code above with the <strong>Duel</strong> button on the home screen.';
+      }
+
+      var m = location.search.match(/[?&]c=([A-Za-z0-9]{6})/);
+      var code = m ? m[1].toUpperCase() : '';
+      if (!/^[A-HJ-NP-Z2-9]{6}$/.test(code)) code = '';
+      document.getElementById('code').textContent = code || '——';
+
+      var ua = navigator.userAgent || '';
+      var android = /Android/i.test(ua);
+      var ios = /iPhone|iPad|iPod/i.test(ua);
+      var open = document.getElementById('open');
+      if (!code) {
+        open.classList.add('hidden');
+      } else if (android) {
+        // Uygulama yüklüyse açar, değilse Play Store'a gider
+        open.href = 'intent://duel/' + code + '#Intent;scheme=topzinga;package=' + PKG +
+          ';S.browser_fallback_url=' + encodeURIComponent(PLAY_URL) + ';end';
+      } else {
+        open.href = 'topzinga://duel/' + code;
+      }
+      if (android || !ios) document.getElementById('play').classList.remove('hidden');
+      if (IOS_URL && (ios || !android)) {
+        var b = document.getElementById('ios');
+        b.href = IOS_URL;
+        b.classList.remove('hidden');
+      }
+    })();
+  </script>
+</body>
+</html>
